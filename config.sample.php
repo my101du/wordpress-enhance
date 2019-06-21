@@ -21,10 +21,12 @@ $template = 'SMS_123456789';
 
 // addons(enable/disable)
 $addons = [
-	'enabled' => [
+	'mobile-auth'=>'MCMobileAuth',
+	'popup-login'=>'MCPopupLogin',
+	'woocommerce-auth'=>'MCWoocommerceAuthExt'
+];
 
-	],
-	'disabled' => [
-		
-	]
+// customers
+$customers = [
+	'apple'=>'MCCustomerApple'
 ];

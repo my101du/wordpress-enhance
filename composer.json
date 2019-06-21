@@ -3,5 +3,8 @@
         "guzzlehttp/guzzle": "^6.3"
     },
     "require": {
+    	'psr-4': {
+            "Macode\\": "app/"
+        }
     }
 }

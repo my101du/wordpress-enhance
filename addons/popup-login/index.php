@@ -8,6 +8,7 @@ class MCPopupLogin
     public static function init()
     {
         add_shortcode('renqizx_mobile_register_form', [__CLASS__, 'shortcodeOfRegisterForm']);
+        add_shortcode('renqizx_login_logout', [__CLASS__, 'shortcodeOfLogin']);
 
         add_action('wp_ajax_register_user', [__CLASS__, 'ajaxRegisterUser']);
 		add_action('wp_ajax_nopriv_register_user', [__CLASS__, 'ajaxRegisterUser']);
@@ -47,6 +48,31 @@ class MCPopupLogin
 
         return ob_get_clean();
         // return $content;
+    }
+
+
+
+    /**
+     * 页面顶部 登录/退出 显示的shortcode
+     *
+     * @param array $atts
+     * @param [type] $content
+     * @return void
+     */
+    public function shortcodeOfLogin($atts = [], $content = null)
+    {
+        if (is_user_logged_in()) {
+            global $current_user;
+
+            wp_get_current_user();
+            $current_user->user_login;
+
+            return $current_user->user_login . " <a href=" . wp_logout_url(get_permalink()) . ">退出</a>";
+        } else {
+            return "<a href=" . wp_login_url(get_permalink()) . ">登录</a> <a href=" . wp_registration_url(get_permalink()) . ">注册</a>";
+        }
+
+        return $content;
     }
 
     /**

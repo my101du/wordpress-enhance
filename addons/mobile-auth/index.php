@@ -22,6 +22,10 @@ class MCMobileAuth
         //暂未明白用途
         add_filter('send_password_change_email', '__return_false');
         add_filter('user_contactmethods', [__CLASS__, 'mcAddContactFields']);
+
+        // don't know the useage
+        add_filter('gettext', array('MCCore', 'changeTranslatedText'), 20, 3);
+        add_action('admin_init', array('MCCore', 'removeDefaultPasswordNag'));
     }
 
     /**
@@ -454,6 +458,23 @@ class MCMobileAuth
             }
 
         endif;
+    }
+
+    public function removeDefaultPasswordNag()
+    {
+        global $user_ID;
+        delete_user_setting('default_password_nag', $user_ID);
+        update_user_option($user_ID, 'default_password_nag', false, true);
+    }
+
+    public static function changeTranslatedText($translated_text, $untranslated_text, $domain)
+    {
+        if ($untranslated_text === 'A password will be e-mailed to you.' || $untranslated_text === 'Registration confirmation will be emailed to you.')
+            return '';
+        else if ($untranslated_text === 'Registration complete. Please check your e-mail.' || $untranslated_text === 'Registration complete. Please check your email.')
+            return '注册成功！';
+        else
+            return $translated_text;
     }
 
 }

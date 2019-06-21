@@ -1,9 +1,9 @@
 <?php
-// namespace wc;
-
+if (!defined('ABSPATH')) {
+    exit();
+}
 
 // echo $wc_auth instanceof WC_Auth;
-
 
 if (class_exists('WC_Auth')) {
     class MCWoocommerceAuthExt extends WC_Auth
@@ -117,4 +117,10 @@ if (class_exists('WC_Auth')) {
             }
         }
     }
+}
+
+if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
+    require_once dirname(MC_PLUGIN_PATH) . '/woocommerce/woocommerce.php';
+
+    new MCWoocommerceAuthExt();
 }

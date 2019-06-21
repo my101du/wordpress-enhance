@@ -43,46 +43,54 @@ if (!class_exists('MCEnhance')) {
             require_once 'includes/helper_functions.php';
             require_once 'config.php';
 
-            // captcha session name
-            require_once 'includes/captcha/config.php';
-
             // define constants
             define('MC_PLUGIN_PATH', plugin_dir_path(__FILE__));
             define('MC_PLUGIN_URL', plugin_dir_url(__FILE__));
             define('MC_PLUGIN_FILE', __FILE__);
 
-            //[TODO] 插件列表开关
-            //
-            add_action('init', [$this, 'registerFiles']);
+            register_activation_hook(MC_PLUGIN_FILE, array(__CLASS__, 'activePlugin'));
+            register_deactivation_hook(MC_PLUGIN_FILE, [__CLASS__, 'deactivePlugin']);
+
+            // add_action('init', [$this, 'registerFiles']);
             // add_action('wp_enqueue_scripts', [$this, 'enqueueFiles'], 50);
 
-            // load includes
-            require_once 'includes/MCCore.class.php';
+            // load necessary classes
             require_once 'includes/MCErrors.class.php';
-            require_once 'includes/MCMobileAuth.class.php';
-            require_once 'includes/MCPopupLogin.class.php';
 
-            // call the init() of classes
-            add_action('init', array('MCCore', 'init'), 10);
-            add_action('init', array('MCMobileAuth', 'init'), 11);
-            add_action('init', array('MCPopupLogin', 'init'), 12);
+            // load addons
+            foreach ($addons as $name => $class) {
+                require_once 'addons/' . $name . '/index.php';
+                add_action('init', array($class, 'init'), 11);
+            }
 
-            // when woocommerce installed
-            if (in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
-                require_once dirname(MC_PLUGIN_PATH) . '/woocommerce/woocommerce.php';
-
-                require_once 'includes/MCWoocommerceAuthExt.class.php';
-                new MCWoocommerceAuthExt();
+            // load customer functinons
+            foreach ($customers as $name => $class) {
+                require_once 'customers/' . $name . '/index.php';
+                add_action('init', array($class, 'init'), 11);
             }
         }
 
-        public function registerFiles()
+        /**
+         * 插件激活
+         *
+         * @return void
+         */
+        public function activePlugin()
         {
-            wp_register_script('mc_js', plugins_url('/js/renqizx-common.js', __FILE__));
-            wp_register_style('mc_style', plugins_url('/css/renqizx-common.css', __FILE__), false, time(), 'all');
+            add_option('mc_actived', 'true');
+        }
 
-            wp_enqueue_script('mc_js');
-			wp_enqueue_style('mc_style');
+        /**
+         * 插件禁用
+         *
+         * @return void
+         */
+        public function deactivePlugin()
+        {
+            // global $wpdb, $table_name;
+
+            // $sql = "DROP TABLE IF EXISTS $table_name";
+            // $wpdb->query($sql);
         }
     }
 }
